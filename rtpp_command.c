@@ -201,11 +201,17 @@ reply_port(struct cfg *cf, int fd, struct sockaddr_storage *raddr,
     }
     if (lia[0] == NULL || ishostnull(lia[0]))
 	len += sprintf(cp, "%d\n", lport);
-    else
-	len += sprintf(cp, "%d %s%s\n", lport, addr2char(lia[0]),
+    else {
+	    if(cf->advertised != NULL)
+	        len += sprintf(cp, "%d %s%s\n", lport, cf->advertised,
+		(lia[0]->sa_family == AF_INET) ? "" : " 6");
+	    else
+		    len += sprintf(cp, "%d %s%s\n", lport, addr2char(lia[0]),
 	  (lia[0]->sa_family == AF_INET) ? "" : " 6");
     doreply(cf, fd, buf, len, raddr, rlen);
-}
+
+    }
+}	
 
 static void
 reply_error(struct cfg *cf, int fd, struct sockaddr_storage *raddr,
